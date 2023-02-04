@@ -17,14 +17,14 @@ func ListRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 		var pagingData common.Paging
 
 		if err := ctx.ShouldBind(&pagingData); err != nil {
-			panic(err)
+			panic(common.ErrInvalidRequest(err))
 		}
 		pagingData.Fullfill()
 
 		var filter restaurantmodel.Filter
 
 		if err := ctx.ShouldBind(&filter); err != nil {
-			panic(err)
+			panic(common.ErrInvalidRequest(err))
 		}
 		filter.Status = []int{1}
 

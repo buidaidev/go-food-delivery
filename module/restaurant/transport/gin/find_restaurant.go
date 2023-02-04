@@ -6,7 +6,6 @@ import (
 	restaurantbusiness "go-food-delivery/module/restaurant/business"
 	restaurantstore "go-food-delivery/module/restaurant/storage"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,7 +13,7 @@ import (
 func FindRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		db := appCtx.GetMaiDBConnection()
-		id, err := strconv.Atoi(ctx.Param("id"))
+		uid, err := common.FromBase58(ctx.Param("id"))
 
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
@@ -22,7 +21,7 @@ func FindRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		store := restaurantstore.NewSQLStore(db)
 		business := restaurantbusiness.NewFindRestaurantBusiness(store)
-		data, err := business.FindRestaurant(ctx.Request.Context(), map[string]interface{}{"id": id})
+		data, err := business.FindRestaurant(ctx.Request.Context(), map[string]interface{}{"id": int(uid.GetLocalID())})
 
 		if err != nil {
 			panic(err)

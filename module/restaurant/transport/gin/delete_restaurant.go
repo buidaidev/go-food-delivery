@@ -5,7 +5,6 @@ import (
 	"go-food-delivery/component/appctx"
 	restaurantbusiness "go-food-delivery/module/restaurant/business"
 	restaurantstore "go-food-delivery/module/restaurant/storage"
-	"strconv"
 
 	"net/http"
 
@@ -15,7 +14,7 @@ import (
 func DeleteRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		db := appCtx.GetMaiDBConnection()
-		id, err := strconv.Atoi(ctx.Param("id"))
+		uid, err := common.FromBase58(ctx.Param("id"))
 
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
@@ -24,7 +23,7 @@ func DeleteRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 		store := restaurantstore.NewSQLStore(db)
 		business := restaurantbusiness.NewDeleteRestaurantBusiness(store)
 
-		if err := business.DeleteRestaurant(ctx.Request.Context(), id); err != nil {
+		if err := business.DeleteRestaurant(ctx.Request.Context(), int(uid.GetLocalID())); err != nil {
 			panic(err)
 		}
 

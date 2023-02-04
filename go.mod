@@ -7,6 +7,7 @@ require gorm.io/driver/mysql v1.4.5
 require github.com/joho/godotenv v1.4.0
 
 require (
+	github.com/btcsuite/btcutil v1.0.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.8.2 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
@@ -29,6 +30,7 @@ require (
 )
 
 require (
+	github.com/btcsuite/btcd/btcutil v1.1.3
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect

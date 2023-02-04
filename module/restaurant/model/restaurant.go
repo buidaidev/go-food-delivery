@@ -26,6 +26,14 @@ type RestaurantUpdate struct {
 
 func (Restaurant) TableName() string { return "restaurants" }
 
+func (r *Restaurant) Mask(isAdminOrOwner bool) {
+	r.GenUID(common.DbTypeRestaurant)
+}
+
+func (r *RestaurantCreate) Mask(isAdminOrOwner bool) {
+	r.GenUID(common.DbTypeRestaurant)
+}
+
 func (data *RestaurantCreate) Validate() error {
 	data.Name = strings.TrimSpace(data.Name)
 

@@ -28,6 +28,6 @@ func CreateRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
-		ctx.JSON(http.StatusOK, common.SimpleSuccessRespone(data.Id))
+		ctx.JSON(http.StatusOK, common.SimpleSuccessRespone(data.FakeId))
 	}
 }
