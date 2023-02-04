@@ -1,6 +1,7 @@
 package ginrestaurant
 
 import (
+	"go-food-delivery/common"
 	"go-food-delivery/component/appctx"
 	restaurantbusiness "go-food-delivery/module/restaurant/business"
 	restaurantstore "go-food-delivery/module/restaurant/storage"
@@ -17,24 +18,16 @@ func DeleteRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 		id, err := strconv.Atoi(ctx.Param("id"))
 
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
-			return
+			panic(common.ErrInvalidRequest(err))
 		}
 
 		store := restaurantstore.NewSQLStore(db)
 		business := restaurantbusiness.NewDeleteRestaurantBusiness(store)
 
 		if err := business.DeleteRestaurant(ctx.Request.Context(), id); err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
-			return
+			panic(err)
 		}
 
-		ctx.JSON(http.StatusOK, gin.H{
-			"data": 1,
-		})
+		ctx.JSON(http.StatusOK, common.SimpleSuccessRespone(true))
 	}
 }

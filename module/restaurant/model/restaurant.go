@@ -36,4 +36,6 @@ func (data *RestaurantCreate) Validate() error {
 	return nil
 }
 
+const EntityName = "Restaurant"
+
 var ErrNameIsEmpty = errors.New("Nam can not be empty.")

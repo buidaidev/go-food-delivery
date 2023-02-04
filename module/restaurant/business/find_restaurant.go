@@ -2,6 +2,7 @@ package restaurantbusiness
 
 import (
 	"context"
+	"go-food-delivery/common"
 	restaurantmodel "go-food-delivery/module/restaurant/model"
 )
 
@@ -29,7 +30,7 @@ func (business *findRestaurantBusiness) FindRestaurant(
 	data, err := business.store.FindDataWithCondition(context, condition)
 
 	if err != nil {
-		return nil, err
+		return nil, common.ErrCanNotGetEntity(restaurantmodel.EntityName, err)
 	}
 
 	return data, nil

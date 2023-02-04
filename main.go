@@ -11,6 +11,7 @@ import (
 	"gorm.io/gorm"
 
 	"go-food-delivery/component/appctx"
+	"go-food-delivery/middleware"
 	ginrestaurant "go-food-delivery/module/restaurant/transport/gin"
 )
 
@@ -40,6 +41,8 @@ func main() {
 	appContext := appctx.NewAppContext(db)
 
 	r := gin.Default()
+	r.Use(middleware.Recover(appContext))
+
 	v1 := r.Group("/v1")
 	restaurants := v1.Group("restaurants")
 	{
