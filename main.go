@@ -3,33 +3,16 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
 	"os"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+
+	"go-food-delivery/component/appctx"
+	ginrestaurant "go-food-delivery/module/restaurant/transport/gin"
 )
-
-type Restaurant struct {
-	Id      int    `json:"id" gorm:"column:id;"`
-	Name    string `json:"name" gorm:"column:name;"`
-	Address string `json:"address" gorm:"column:address;"`
-}
-
-type RestaurantCreate struct {
-	Name    string `json:"name" gorm:"column:name;"`
-	Address string `json:"address" gorm:"column:address;"`
-}
-
-type RestaurantUpdate struct {
-	Name    *string `json:"name" gorm:"column:name;"`
-	Address *string `json:"address" gorm:"column:address;"`
-}
-
-func (Restaurant) TableName() string { return "restaurants" }
 
 func main() {
 	err := godotenv.Load()
@@ -53,132 +36,22 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	db = db.Debug()
+	appContext := appctx.NewAppContext(db)
+
 	r := gin.Default()
 	v1 := r.Group("/v1")
-
 	restaurants := v1.Group("restaurants")
 	{
-		restaurants.POST("/", func(ctx *gin.Context) {
-			var data RestaurantCreate
+		restaurants.POST("/", ginrestaurant.CreateRestaurant(appContext))
 
-			if err := ctx.ShouldBind(&data); err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{
-					"error": err.Error(),
-				})
-				return
-			}
+		restaurants.GET("/", ginrestaurant.ListRestaurant(appContext))
 
-			db.Create(&data)
+		restaurants.GET("/:id", ginrestaurant.FindRestaurant(appContext))
 
-			ctx.JSON(http.StatusOK, gin.H{
-				"data": data,
-			})
-		})
+		restaurants.PATCH("/:id", ginrestaurant.UpdateRestaurant(appContext))
 
-		restaurants.GET("/", func(ctx *gin.Context) {
-			var data []Restaurant
-
-			type Paging struct {
-				Page  int `json:"page" form:"page"`
-				Limit int `json:"limit" form:"limit"`
-			}
-
-			var pagingData Paging
-
-			if err := ctx.ShouldBind(&pagingData); err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{
-					"error": err.Error(),
-				})
-				return
-			}
-
-			if pagingData.Page <= 0 {
-				pagingData.Page = 1
-			}
-
-			if pagingData.Limit <= 0 {
-				pagingData.Limit = 5
-			}
-
-			db.
-				Offset((pagingData.Page - 1) * pagingData.Limit).
-				Order("id desc").
-				Limit(pagingData.Limit).
-				Find(&data)
-
-			ctx.JSON(http.StatusOK, gin.H{
-				"data": data,
-			})
-		})
-
-		restaurants.GET("/:id", func(ctx *gin.Context) {
-			id, err := strconv.Atoi(ctx.Param("id"))
-
-			if err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{
-					"error": err.Error(),
-				})
-				return
-			}
-
-			var data Restaurant
-
-			db.
-				Where("id = ?", id).
-				First(&data)
-
-			ctx.JSON(http.StatusOK, gin.H{
-				"data": data,
-			})
-		})
-
-		restaurants.PATCH("/:id", func(ctx *gin.Context) {
-			id, err := strconv.Atoi(ctx.Param("id"))
-
-			if err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{
-					"error": err.Error(),
-				})
-				return
-			}
-
-			var data RestaurantUpdate
-
-			if err := ctx.ShouldBind(&data); err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{
-					"error": err.Error(),
-				})
-				return
-			}
-
-			db.
-				Where("id = ?", id).
-				Updates(&data)
-
-			ctx.JSON(http.StatusOK, gin.H{
-				"data": data,
-			})
-		})
-
-		restaurants.DELETE("/:id", func(ctx *gin.Context) {
-			id, err := strconv.Atoi(ctx.Param("id"))
-
-			if err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{
-					"error": err.Error(),
-				})
-				return
-			}
-
-			db.
-				Table(Restaurant{}.TableName()).
-				Where("id = ?", id).
-				Delete(nil)
-
-			ctx.JSON(http.StatusOK, gin.H{
-				"data": 1,
-			})
-		})
+		restaurants.DELETE("/:id", ginrestaurant.DeleteRestaurant(appContext))
 	}
 
 	r.Run()
