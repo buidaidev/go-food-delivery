@@ -11,6 +11,7 @@ func (s *sqlStore) Create(
 	data *restaurantmodel.RestaurantCreate,
 ) error {
 	if err := s.db.
+		Table(restaurantmodel.Restaurant{}.TableName()).
 		Create(&data).Error; err != nil {
 		return common.ErrDB(err)
 	}

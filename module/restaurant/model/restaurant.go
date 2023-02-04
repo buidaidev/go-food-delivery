@@ -8,20 +8,26 @@ import (
 
 type Restaurant struct {
 	common.SQLModel
-	Name    string `json:"name" gorm:"column:name;"`
-	Address string `json:"address" gorm:"column:address;"`
-	Status  int    `json:"status" gorm:"column:status;"`
+	Name    string         `json:"name" gorm:"column:name;"`
+	Address string         `json:"address" gorm:"column:address;"`
+	Status  int            `json:"status" gorm:"column:status;"`
+	Logo    *common.Image  `json:"logo" gorm:"column:logo;"`
+	Cover   *common.Images `json:"cover" gorm:"column:cover;"`
 }
 
 type RestaurantCreate struct {
 	common.SQLModel
-	Name    string `json:"name" gorm:"column:name;"`
-	Address string `json:"address" gorm:"column:address;"`
+	Name    string         `json:"name" gorm:"column:name;"`
+	Address string         `json:"address" gorm:"column:address;"`
+	Logo    *common.Image  `json:"logo" gorm:"column:logo;"`
+	Cover   *common.Images `json:"cover" gorm:"column:cover;"`
 }
 
 type RestaurantUpdate struct {
-	Name    *string `json:"name" gorm:"column:name;"`
-	Address *string `json:"address" gorm:"column:address;"`
+	Name    *string        `json:"name" gorm:"column:name;"`
+	Address *string        `json:"address" gorm:"column:address;"`
+	Logo    *common.Image  `json:"logo" gorm:"column:logo;"`
+	Cover   *common.Images `json:"cover" gorm:"column:cover;"`
 }
 
 func (Restaurant) TableName() string { return "restaurants" }
