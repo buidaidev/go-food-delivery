@@ -13,9 +13,6 @@ import (
 	component "go-food-delivery/component/appctx"
 	"go-food-delivery/component/uploadprovider"
 	"go-food-delivery/middleware"
-	ginrestaurant "go-food-delivery/module/restaurant/transport/gin"
-	ginupload "go-food-delivery/module/upload/transport/gin"
-	ginuser "go-food-delivery/module/user/transport/gin"
 )
 
 func main() {
@@ -55,23 +52,8 @@ func main() {
 	r.Static("/static", "./static")
 
 	v1 := r.Group("/v1")
-	// upload
-	v1.POST("/upload", ginupload.Upload(appContext))
-
-	// auth
-	v1.POST("/register", ginuser.Register(appContext))
-	v1.POST("/authenticate", ginuser.Login(appContext))
-	v1.POST("/profile", middleware.RequiredAuth(appContext), ginuser.Profile(appContext))
-
-	// restaurants
-	restaurants := v1.Group("restaurants")
-	{
-		restaurants.POST("/", ginrestaurant.CreateRestaurant(appContext))
-		restaurants.GET("/", ginrestaurant.ListRestaurant(appContext))
-		restaurants.GET("/:id", ginrestaurant.FindRestaurant(appContext))
-		restaurants.PATCH("/:id", ginrestaurant.UpdateRestaurant(appContext))
-		restaurants.DELETE("/:id", ginrestaurant.DeleteRestaurant(appContext))
-	}
+	setupRoutes(appContext, v1)
+	setupAdminRoutes(appContext, v1)
 
 	r.Run()
 

@@ -10,7 +10,7 @@ import (
 
 func Profile(appCtx component.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		u := ctx.MustGet(common.CurrentUser)
+		u := ctx.MustGet(common.CurrentUser).(common.Requester)
 
 		ctx.JSON(http.StatusOK, common.SimpleSuccessRespone(u))
 	}

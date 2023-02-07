@@ -13,6 +13,8 @@ import (
 func FindRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		db := appCtx.GetMaiDBConnection()
+		requester := ctx.MustGet(common.CurrentUser).(common.Requester)
+
 		uid, err := common.FromBase58(ctx.Param("id"))
 
 		if err != nil {
@@ -20,7 +22,7 @@ func FindRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 		}
 
 		store := restaurantstore.NewSQLStore(db)
-		business := restaurantbusiness.NewFindRestaurantBusiness(store)
+		business := restaurantbusiness.NewFindRestaurantBusiness(store, requester)
 		data, err := business.FindRestaurant(ctx.Request.Context(), map[string]interface{}{"id": int(uid.GetLocalID())})
 
 		if err != nil {

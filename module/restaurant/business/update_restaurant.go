@@ -20,11 +20,12 @@ type UpdateRestaurantStore interface {
 }
 
 type updateRestaurantBusiness struct {
-	store UpdateRestaurantStore
+	store     UpdateRestaurantStore
+	requester common.Requester
 }
 
-func NewUpdateRestaurantBusiness(store UpdateRestaurantStore) *updateRestaurantBusiness {
-	return &updateRestaurantBusiness{store: store}
+func NewUpdateRestaurantBusiness(store UpdateRestaurantStore, requester common.Requester) *updateRestaurantBusiness {
+	return &updateRestaurantBusiness{store: store, requester: requester}
 }
 
 func (business *updateRestaurantBusiness) UpdateRestaurant(context context.Context, data *restaurantmodel.RestaurantUpdate, id int) error {
@@ -36,6 +37,10 @@ func (business *updateRestaurantBusiness) UpdateRestaurant(context context.Conte
 
 	if oldData.Status == 0 {
 		return common.ErrEntityDeleted(restaurantmodel.EntityName, err)
+	}
+
+	if oldData.UserId != business.requester.GetUserId() {
+		return common.ErrNoPermission(nil)
 	}
 
 	if err := business.store.Update(context, data, id); err != nil {

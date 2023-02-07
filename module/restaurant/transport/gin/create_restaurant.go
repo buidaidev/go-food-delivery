@@ -15,11 +15,15 @@ import (
 func CreateRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		db := appCtx.GetMaiDBConnection()
+		requester := ctx.MustGet(common.CurrentUser).(common.Requester)
+
 		var data restaurantmodel.RestaurantCreate
 
 		if err := ctx.ShouldBind(&data); err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
+
+		data.UserId = requester.GetUserId()
 
 		store := restaurantstore.NewSQLStore(db)
 		business := restaurantbusiness.NewCreateRestaurantBusiness(store)

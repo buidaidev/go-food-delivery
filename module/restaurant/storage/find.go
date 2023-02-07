@@ -13,10 +13,15 @@ func (s *sqlStore) FindDataWithCondition(
 	condition map[string]interface{},
 	moreKeys ...string,
 ) (*restaurantmodel.Restaurant, error) {
+	db := s.db.Table(restaurantmodel.Restaurant{}.TableName())
+
+	for i := range moreKeys {
+		db = db.Preload(moreKeys[i])
+	}
+
 	var data restaurantmodel.Restaurant
 
 	if err := s.db.
-		Table(restaurantmodel.Restaurant{}.TableName()).
 		Where(condition).
 		First(&data).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {

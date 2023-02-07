@@ -2,7 +2,7 @@ package ginrestaurant
 
 import (
 	"go-food-delivery/common"
-	"go-food-delivery/component/appctx"
+	component "go-food-delivery/component/appctx"
 	restaurantbusiness "go-food-delivery/module/restaurant/business"
 	restaurantstore "go-food-delivery/module/restaurant/storage"
 
@@ -14,6 +14,8 @@ import (
 func DeleteRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		db := appCtx.GetMaiDBConnection()
+		requester := ctx.MustGet(common.CurrentUser).(common.Requester)
+
 		uid, err := common.FromBase58(ctx.Param("id"))
 
 		if err != nil {
@@ -21,7 +23,7 @@ func DeleteRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 		}
 
 		store := restaurantstore.NewSQLStore(db)
-		business := restaurantbusiness.NewDeleteRestaurantBusiness(store)
+		business := restaurantbusiness.NewDeleteRestaurantBusiness(store, requester)
 
 		if err := business.DeleteRestaurant(ctx.Request.Context(), int(uid.GetLocalID())); err != nil {
 			panic(err)
