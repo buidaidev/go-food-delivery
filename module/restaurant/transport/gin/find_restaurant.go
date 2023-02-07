@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func FindRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
+func FindRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		db := appCtx.GetMaiDBConnection()
 		uid, err := common.FromBase58(ctx.Param("id"))

@@ -6,6 +6,10 @@ import (
 	"strings"
 )
 
+const EntityName = "Restaurant"
+
+var ErrNameIsEmpty = errors.New("Nam can not be empty.")
+
 type Restaurant struct {
 	common.SQLModel
 	Name    string         `json:"name" gorm:"column:name;"`
@@ -36,6 +40,8 @@ func (r *Restaurant) Mask(isAdminOrOwner bool) {
 	r.GenUID(common.DbTypeRestaurant)
 }
 
+func (RestaurantCreate) TableName() string { return Restaurant{}.TableName() }
+
 func (r *RestaurantCreate) Mask(isAdminOrOwner bool) {
 	r.GenUID(common.DbTypeRestaurant)
 }
@@ -49,7 +55,3 @@ func (data *RestaurantCreate) Validate() error {
 
 	return nil
 }
-
-const EntityName = "Restaurant"
-
-var ErrNameIsEmpty = errors.New("Nam can not be empty.")

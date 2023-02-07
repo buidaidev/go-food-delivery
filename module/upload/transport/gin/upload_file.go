@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Upload(appCtx appctx.AppContext) gin.HandlerFunc {
+func Upload(appCtx component.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		fileHeader, err := ctx.FormFile("file")
 

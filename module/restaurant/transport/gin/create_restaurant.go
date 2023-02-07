@@ -2,7 +2,7 @@ package ginrestaurant
 
 import (
 	"go-food-delivery/common"
-	"go-food-delivery/component/appctx"
+	component "go-food-delivery/component/appctx"
 	restaurantbusiness "go-food-delivery/module/restaurant/business"
 	restaurantmodel "go-food-delivery/module/restaurant/model"
 	restaurantstore "go-food-delivery/module/restaurant/storage"
@@ -12,13 +12,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreateRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
+func CreateRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		db := appCtx.GetMaiDBConnection()
 		var data restaurantmodel.RestaurantCreate
 
 		if err := ctx.ShouldBind(&data); err != nil {
-			panic(err)
+			panic(common.ErrInvalidRequest(err))
 		}
 
 		store := restaurantstore.NewSQLStore(db)

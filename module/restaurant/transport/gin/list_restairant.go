@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ListRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
+func ListRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		db := appCtx.GetMaiDBConnection()
 		var pagingData common.Paging

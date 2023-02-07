@@ -33,6 +33,7 @@ require (
 
 require (
 	github.com/btcsuite/btcd/btcutil v1.1.3
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
