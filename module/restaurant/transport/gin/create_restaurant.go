@@ -28,6 +28,8 @@ func CreateRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
+		data.Mask(false)
+
 		ctx.JSON(http.StatusOK, common.SimpleSuccessRespone(data.FakeId))
 	}
 }

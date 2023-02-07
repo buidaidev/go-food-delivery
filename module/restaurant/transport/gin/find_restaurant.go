@@ -2,7 +2,7 @@ package ginrestaurant
 
 import (
 	"go-food-delivery/common"
-	"go-food-delivery/component/appctx"
+	component "go-food-delivery/component/appctx"
 	restaurantbusiness "go-food-delivery/module/restaurant/business"
 	restaurantstore "go-food-delivery/module/restaurant/storage"
 	"net/http"
@@ -26,6 +26,8 @@ func FindRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
+
+		data.Mask(false)
 
 		ctx.JSON(http.StatusOK, common.SimpleSuccessRespone(data))
 	}

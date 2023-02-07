@@ -2,7 +2,7 @@ package ginrestaurant
 
 import (
 	"go-food-delivery/common"
-	"go-food-delivery/component/appctx"
+	component "go-food-delivery/component/appctx"
 	restaurantbusiness "go-food-delivery/module/restaurant/business"
 	restaurantmodel "go-food-delivery/module/restaurant/model"
 	restaurantstore "go-food-delivery/module/restaurant/storage"
