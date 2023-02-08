@@ -4,24 +4,22 @@ import (
 	"context"
 	"go-food-delivery/common"
 	restaurantmodel "go-food-delivery/module/restaurant/model"
-	usermodel "go-food-delivery/module/user/model"
 )
 
-type ListRestaurantStore interface {
-	ListDataWithCondition(
+type ListRestaurantRepository interface {
+	ListRestaurant(
 		context context.Context,
 		filter *restaurantmodel.Filter,
 		paging *common.Paging,
-		moreKeys ...string,
 	) ([]restaurantmodel.Restaurant, error)
 }
 
 type listRestaurantBusiness struct {
-	store ListRestaurantStore
+	repository ListRestaurantRepository
 }
 
-func NewListRestaurantBusiness(store ListRestaurantStore) *listRestaurantBusiness {
-	return &listRestaurantBusiness{store: store}
+func NewListRestaurantBusiness(repository ListRestaurantRepository) *listRestaurantBusiness {
+	return &listRestaurantBusiness{repository: repository}
 }
 
 func (business *listRestaurantBusiness) ListRestaurant(
@@ -29,7 +27,7 @@ func (business *listRestaurantBusiness) ListRestaurant(
 	filter *restaurantmodel.Filter,
 	paging *common.Paging,
 ) ([]restaurantmodel.Restaurant, error) {
-	result, err := business.store.ListDataWithCondition(context, filter, paging, usermodel.EntityName)
+	result, err := business.repository.ListRestaurant(context, filter, paging)
 
 	if err != nil {
 		return nil, common.ErrCanNotListEntity(restaurantmodel.EntityName, err)

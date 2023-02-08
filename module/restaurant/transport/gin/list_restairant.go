@@ -5,7 +5,9 @@ import (
 	component "go-food-delivery/component/appctx"
 	restaurantbusiness "go-food-delivery/module/restaurant/business"
 	restaurantmodel "go-food-delivery/module/restaurant/model"
+	restaurantrepository "go-food-delivery/module/restaurant/repository"
 	restaurantstore "go-food-delivery/module/restaurant/storage"
+	restaurantlikestorage "go-food-delivery/module/restaurantlike/storage"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -29,7 +31,10 @@ func ListRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 		filter.Status = []int{1}
 
 		store := restaurantstore.NewSQLStore(db)
-		business := restaurantbusiness.NewListRestaurantBusiness(store)
+		likeStore := restaurantlikestorage.NewSQLStore(db)
+		repository := restaurantrepository.NewListRestaurantRepository(store, likeStore)
+		business := restaurantbusiness.NewListRestaurantBusiness(repository)
+
 		result, err := business.ListRestaurant(ctx.Request.Context(), &filter, &pagingData)
 
 		if err != nil {

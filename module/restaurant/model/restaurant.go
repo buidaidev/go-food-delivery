@@ -12,13 +12,14 @@ var ErrNameIsEmpty = errors.New("Nam can not be empty.")
 
 type Restaurant struct {
 	common.SQLModel
-	Name    string             `json:"name" gorm:"column:name;"`
-	Address string             `json:"address" gorm:"column:address;"`
-	Status  int                `json:"status" gorm:"column:status;"`
-	Logo    *common.Image      `json:"logo" gorm:"column:logo;"`
-	Cover   *common.Images     `json:"cover" gorm:"column:cover;"`
-	User    *common.SimpleUser `json:"user" gorm:"preload:false;" `
-	UserId  int                `json:"-" gorm:"column:user_id"`
+	Name      string             `json:"name" gorm:"column:name;"`
+	Address   string             `json:"address" gorm:"column:address;"`
+	Status    int                `json:"status" gorm:"column:status;"`
+	Logo      *common.Image      `json:"logo" gorm:"column:logo;"`
+	Cover     *common.Images     `json:"cover" gorm:"column:cover;"`
+	User      *common.SimpleUser `json:"user" gorm:"preload:false;" `
+	UserId    int                `json:"-" gorm:"column:user_id"`
+	LikeCount int                `json:"like_count" gorm:"-"`
 }
 
 type RestaurantCreate struct {
