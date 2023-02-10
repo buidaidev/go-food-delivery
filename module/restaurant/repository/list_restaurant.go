@@ -5,7 +5,6 @@ import (
 	"go-food-delivery/common"
 	restaurantmodel "go-food-delivery/module/restaurant/model"
 	usermodel "go-food-delivery/module/user/model"
-	"log"
 )
 
 type ListRestaurantStore interface {
@@ -17,17 +16,12 @@ type ListRestaurantStore interface {
 	) ([]restaurantmodel.Restaurant, error)
 }
 
-type LikeRestaurantStore interface {
-	GetRestaurantLikes(ctx context.Context, ids []int) (map[int]int, error)
-}
-
 type listRestaurantRepository struct {
-	store     ListRestaurantStore
-	likeStore LikeRestaurantStore
+	store ListRestaurantStore
 }
 
-func NewListRestaurantRepository(store ListRestaurantStore, likeStore LikeRestaurantStore) *listRestaurantRepository {
-	return &listRestaurantRepository{store: store, likeStore: likeStore}
+func NewListRestaurantRepository(store ListRestaurantStore) *listRestaurantRepository {
+	return &listRestaurantRepository{store: store}
 }
 
 func (repository *listRestaurantRepository) ListRestaurant(
@@ -39,23 +33,6 @@ func (repository *listRestaurantRepository) ListRestaurant(
 
 	if err != nil {
 		return nil, common.ErrCanNotListEntity(restaurantmodel.EntityName, err)
-	}
-
-	ids := make([]int, len(result))
-
-	for i := range ids {
-		ids[i] = result[i].Id
-	}
-
-	likeMap, err := repository.likeStore.GetRestaurantLikes(context, ids)
-
-	if err != nil {
-		log.Println(err)
-		return result, nil
-	}
-
-	for i, item := range result {
-		result[i].LikeCount = likeMap[item.Id]
 	}
 
 	return result, nil

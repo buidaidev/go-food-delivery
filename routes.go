@@ -6,6 +6,7 @@ import (
 	"go-food-delivery/middleware"
 
 	ginrestaurant "go-food-delivery/module/restaurant/transport/gin"
+	ginrestaurantlike "go-food-delivery/module/restaurantlike/transport/gin"
 	ginupload "go-food-delivery/module/upload/transport/gin"
 	ginuser "go-food-delivery/module/user/transport/gin"
 
@@ -29,6 +30,9 @@ func setupRoutes(appCtx component.AppContext, v1 *gin.RouterGroup) {
 		restaurants.GET("/:id", ginrestaurant.FindRestaurant(appCtx))
 		restaurants.PATCH("/:id", ginrestaurant.UpdateRestaurant(appCtx))
 		restaurants.DELETE("/:id", ginrestaurant.DeleteRestaurant(appCtx))
-	}
 
+		restaurants.POST("/:id/liked-users", ginrestaurantlike.UserLikeRestaurant(appCtx))
+		restaurants.DELETE("/:id/disliked-users", ginrestaurantlike.UserDislikeRestaurant(appCtx))
+		restaurants.GET("/:id/liked-users", ginrestaurantlike.ListUserLikes(appCtx))
+	}
 }

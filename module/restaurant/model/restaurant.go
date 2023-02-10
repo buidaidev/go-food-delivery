@@ -19,7 +19,7 @@ type Restaurant struct {
 	Cover     *common.Images     `json:"cover" gorm:"column:cover;"`
 	User      *common.SimpleUser `json:"user" gorm:"preload:false;" `
 	UserId    int                `json:"-" gorm:"column:user_id"`
-	LikeCount int                `json:"like_count" gorm:"-"`
+	LikeCount int                `json:"like_count" gorm:"column:liked_count;"`
 }
 
 type RestaurantCreate struct {

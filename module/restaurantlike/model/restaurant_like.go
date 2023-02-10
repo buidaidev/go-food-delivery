@@ -29,10 +29,10 @@ func ErrCanNotLikeRestaurant(err error) *common.AppError {
 	)
 }
 
-func ErrCanNotUnlikeRestaurant(err error) *common.AppError {
+func ErrCanNotDislikeRestaurant(err error) *common.AppError {
 	return common.NewCustomError(
 		err,
 		fmt.Sprintf("Can not unlike restaurant"),
-		fmt.Sprintf("ErrorCanNotUnlikeRestaurant"),
+		fmt.Sprintf("ErrorCanNotDislikeRestaurant"),
 	)
 }
