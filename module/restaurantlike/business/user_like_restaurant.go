@@ -2,7 +2,7 @@ package restaurantlikebusiness
 
 import (
 	"context"
-	"go-food-delivery/common"
+	"go-food-delivery/component/asyncjob"
 	restaurantlikemodel "go-food-delivery/module/restaurantlike/model"
 	"log"
 )
@@ -25,22 +25,22 @@ func NewUserLikeRestaurantBusiness(store UserLikeRestaurantStore, increaseStore 
 }
 
 func (business *userLikeRestaurantBusiness) LikeRestaurant(
-	context context.Context,
+	ctx context.Context,
 	data *restaurantlikemodel.Like,
 ) error {
-	err := business.store.Create(context, data)
+	err := business.store.Create(ctx, data)
 
 	if err != nil {
 		return restaurantlikemodel.ErrCanNotLikeRestaurant(err)
 	}
 
-	go func() {
-		defer common.AppRecover()
+	j := asyncjob.NewJob(func(ctx context.Context) error {
+		return business.increaseStore.IncreaseLikeCount(ctx, data.RestaurantId)
+	})
 
-		if err := business.increaseStore.IncreaseLikeCount(context, data.RestaurantId); err != nil {
-			log.Println(err)
-		}
-	}()
+	if err := asyncjob.NewGroup(true, j).Run(ctx); err != nil {
+		log.Println(err)
+	}
 
 	return nil
 }
