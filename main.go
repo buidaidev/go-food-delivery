@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -13,6 +14,8 @@ import (
 	component "go-food-delivery/component/appctx"
 	"go-food-delivery/component/uploadprovider"
 	"go-food-delivery/middleware"
+	"go-food-delivery/pubsub/localpubsub"
+	"go-food-delivery/subscriber"
 )
 
 func main() {
@@ -44,8 +47,9 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	db = db.Debug()
-	appContext := component.NewAppContext(db, s3Provider, secretKey)
+	ps := localpubsub.NewPubSub()
+	appContext := component.NewAppContext(db, s3Provider, secretKey, ps)
+	subscriber.Setup(appContext, context.Background())
 
 	r := gin.Default()
 	r.Use(middleware.Recover(appContext))
