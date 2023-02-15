@@ -2,22 +2,19 @@ package subscriber
 
 import (
 	"context"
-	"go-food-delivery/common"
 	component "go-food-delivery/component/appctx"
 	restaurantstorage "go-food-delivery/module/restaurant/storage"
+	"go-food-delivery/pubsub"
 )
 
-func DecreaseLikeCountAfterUserUnlikeRestaurant(appCtx component.AppContext, ctx context.Context) {
-	c, _ := appCtx.GetPubSub().Subscribe(ctx, common.TopicUserLikeRestaurant)
+func DecreaseLikeCountAfterUserUnlikeRestaurant(appCtx component.AppContext) consumerJob {
+	return consumerJob{
+		Title: "Decrease like count after user likes restaurant",
+		Hld: func(ctx context.Context, message *pubsub.Message) error {
+			store := restaurantstorage.NewSQLStore(appCtx.GetMaiDBConnection())
+			likeData := message.Data().(HasRestaurantId)
 
-	store := restaurantstorage.NewSQLStore(appCtx.GetMaiDBConnection())
-
-	go func() {
-		defer common.AppRecover()
-		for {
-			msg := <-c
-			likeData := msg.Data().(HasRestaurantId)
-			_ = store.DecreaseLikeCount(ctx, likeData.GetRestaurantId())
-		}
-	}()
+			return store.DecreaseLikeCount(ctx, likeData.GetRestaurantId())
+		},
+	}
 }

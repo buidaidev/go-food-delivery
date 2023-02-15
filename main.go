@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
@@ -49,7 +48,7 @@ func main() {
 
 	ps := localpubsub.NewPubSub()
 	appContext := component.NewAppContext(db, s3Provider, secretKey, ps)
-	subscriber.Setup(appContext, context.Background())
+	_ = subscriber.NewEngine(appContext).Start()
 
 	r := gin.Default()
 	r.Use(middleware.Recover(appContext))

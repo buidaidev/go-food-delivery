@@ -2,6 +2,7 @@ package subscriber
 
 import (
 	"context"
+	"go-food-delivery/common"
 	component "go-food-delivery/component/appctx"
 	"go-food-delivery/component/asyncjob"
 	"go-food-delivery/pubsub"
@@ -25,8 +26,22 @@ func NewEngine(appCtx component.AppContext) *consumerEngine {
 	return &consumerEngine{appCtx: appCtx}
 }
 
-// func (engine *consumerEngine) Start() error {
-// }
+func (engine *consumerEngine) Start() error {
+	engine.startSubTopic(
+		common.TopicUserLikeRestaurant,
+		true,
+		IncreaseLikeCountAfterUserLikeRestaurant(engine.appCtx),
+		PushNotificationWhenUserLikeRestaurant(engine.appCtx),
+	)
+
+	engine.startSubTopic(
+		common.TopicUserDisLikeRestaurant,
+		true,
+		DecreaseLikeCountAfterUserUnlikeRestaurant(engine.appCtx),
+	)
+
+	return nil
+}
 
 func (engine *consumerEngine) startSubTopic(topic pubsub.Topic, isConcurrent bool, consumerJobs ...consumerJob) error {
 	c, _ := engine.appCtx.GetPubSub().Subscribe(context.Background(), topic)
